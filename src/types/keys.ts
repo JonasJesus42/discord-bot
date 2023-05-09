@@ -1,3 +1,3 @@
 export interface Keys {
-    clientToken: string;
+  clientToken: string;
 }
