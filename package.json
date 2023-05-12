@@ -11,7 +11,9 @@
     "dev": "nodemon --config nodemon.json src/index.ts",
     "build": "tsc --watch",
     "lint": "eslint --ext .ts --rule 'typescript-eslint/no-unsafe-member-access: \"error\"' --rule 'typescript-eslint/no-unsafe-call: \"error\"' --rule 'typescript-eslint/no-unsafe-assignment: \"error\"' --rule 'typescript-eslint/restrict-template-expressions: \"error\"'",
-    "pretty": "prettier --write \"src/**/*.ts\""
+    "pretty": "prettier --write \"src/**/*.ts\"",
+    "deploy": "cross-env IS_SCRIPT=true ts-node src/scripts/deploy.ts",
+    "deploy-prod": "cross-env NODE_ENV=production yarn deploy"
   },
   "devDependencies": {
     "@types/node": "^20.1.1",
@@ -27,6 +29,7 @@
     "typescript-eslint": "^0.0.1-alpha.0"
   },
   "dependencies": {
+    "cross-env": "^7.0.3",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "eslint": ">=8.0.0"
