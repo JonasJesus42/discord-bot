@@ -5,6 +5,7 @@ import {
 
 export const Colors = {
     error: 0xff0000,
+    success: 0x00ff00,
 }
 
 export const Reply = {
@@ -28,4 +29,12 @@ export const EditReply = {
             }]
         }
     },
+    success(msg: string) {
+        return {
+            embeds: [{
+                color: Colors.success,
+                description: msg,
+            }]
+        }
+    }
 }

@@ -14,6 +14,7 @@ export default event('interactionCreate', async (
     // If namespace not in help pages stop
     if (!Object.values(Namespaces).includes(namespace)) return
 
+    console.log('Namespace:', namespace)
     try {
         // Defer update
         await interaction.deferUpdate()
