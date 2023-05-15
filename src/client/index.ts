@@ -7,7 +7,7 @@ import {
 import keys from '../keys';
 import { registerEvents } from '../utils';
 import events from '../events';
-import {component, embed} from "../webhook/test";
+import {component, embed} from "../pages/ticket";
 import ticket from "../events/interactionCreate/ticket";
 
 export const client = new Client({

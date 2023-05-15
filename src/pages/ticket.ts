@@ -41,7 +41,7 @@ export function selectComponent(): InteractionReplyOptions {
     }
 }
 
-export function buttonSendTicketComponent(selectValue: string): InteractionReplyOptions {
+export function buttonSendTicketComponent(disabled: boolean = false, selectValue?: string): InteractionReplyOptions {
     const embed = new EmbedBuilder()
         .setTitle(`Antes de enviar o ticket para equipe de ${selectValue} certifique de:`)
         .setDescription('1° Ter passado 30 minutos para debugar ou tentado achar uma solução\n ' +
@@ -51,6 +51,7 @@ export function buttonSendTicketComponent(selectValue: string): InteractionReply
         .setCustomId('open_ticket_button')
         .setStyle(ButtonStyle.Success)
         .setLabel('Enviar Ticket')
+        .setDisabled(disabled)
 
     const component = [
         new ActionRowBuilder<ButtonBuilder>()
@@ -63,3 +64,14 @@ export function buttonSendTicketComponent(selectValue: string): InteractionReply
         ephemeral: true,
     }
 }
+
+export const embed = new EmbedBuilder()
+    .setTitle('Ticket de Suporte Tecnico')
+    .setColor('#00ff00')
+
+export const component = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+        .setCustomId('open_menu_ticket_button')
+        .setLabel('Abrir Ticket')
+        .setStyle(ButtonStyle.Success),
+)
