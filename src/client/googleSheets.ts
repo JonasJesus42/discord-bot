@@ -29,7 +29,7 @@ async function getAuthSheets(): Promise<{
     }
 }
 
-export async function getGurusNamesIds(){
+export async function getGurusNamesIds(): Promise<string[][]>{
     const { googleSheets, auth, spreadsheetId } = await getAuthSheets()
 
     const rows = await googleSheets.spreadsheets.values.get({

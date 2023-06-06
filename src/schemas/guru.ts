@@ -2,8 +2,10 @@ import {model , Schema} from 'mongoose';
 
 const guruSchema = new Schema({
     name: String,
-    userId: String,
-    guildId: String,
+    guildId: {
+        type: String,
+        unique: true
+    },
     inAttendance: Boolean,
 });
 
