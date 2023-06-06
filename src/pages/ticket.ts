@@ -4,7 +4,10 @@ import {ActionRowBuilder, ButtonBuilder, SelectMenuBuilder} from "@discordjs/bui
 export const Namespaces = {
     root: 'open_menu_ticket_button',
     select: 'select_category',
-    action: 'open_ticket_button'
+    action: 'open_ticket_button',
+    accept: 'accepted_ticket_button',
+    refuse: 'refuse_ticket_button',
+
 }
 
 export function selectComponent(): InteractionReplyOptions {
@@ -37,7 +40,6 @@ export function selectComponent(): InteractionReplyOptions {
     return {
         embeds: [embed],
         components: component,
-        ephemeral: true,
     }
 }
 
@@ -75,3 +77,32 @@ export const component = new ActionRowBuilder<ButtonBuilder>().addComponents(
         .setLabel('Abrir Ticket')
         .setStyle(ButtonStyle.Success),
 )
+
+export function embedSupportRequest(UserName: string, disabled: boolean = false): InteractionReplyOptions {
+    const embed = new EmbedBuilder()
+        .setTitle(`${UserName} Solicita um soporte técnico`)
+        .setDescription('Voce tem a disponibilidade para atender ?')
+
+    const accepted =  new ButtonBuilder()
+        .setCustomId('accepted_ticket_button')
+        .setStyle(ButtonStyle.Success)
+        .setLabel('Aceitar')
+        .setDisabled(disabled)
+
+    const refuse =  new ButtonBuilder()
+        .setCustomId('refuse_ticket_button')
+        .setStyle(ButtonStyle.Danger)
+        .setLabel('Recusar')
+        .setDisabled(disabled)
+
+    const component = [
+        new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(refuse, accepted)
+    ]
+
+    return {
+        embeds: [embed],
+        components: component,
+        ephemeral: true,
+    }
+}

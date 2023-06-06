@@ -1,7 +1,7 @@
 import {
-  ButtonStyle,
+  ButtonStyle, CategoryChannel, ChannelType,
   Client,
-  GatewayIntentBits,
+  GatewayIntentBits, Guild, GuildChannel,
   TextChannel,
 } from 'discord.js';
 import keys from '../keys';
@@ -16,14 +16,17 @@ export const client = new Client({
 
 registerEvents(client, events);
 
-client.on('ready', (client) => {
+
+client.on('ready', async (client) => {
+
   const channel = client.channels.cache.get(keys.testChannel);
 
+
   if (channel instanceof TextChannel) {
-    channel.bulkDelete(100)
+    await channel.bulkDelete(100)
         .then(messages => console.log(`Apagou ${messages.size} mensagens`))
         .catch(console.error);
-    channel.send({ embeds: [embed] , components: [component] })
+    await channel.send({embeds: [embed], components: [component]})
         .then(() => console.log(`Mensagem enviada com sucesso para o canal ${channel.name}!`))
         .catch((error: any) => console.error(`Erro ao enviar mensagem para o canal ${channel.name}:`, error));
   } else {

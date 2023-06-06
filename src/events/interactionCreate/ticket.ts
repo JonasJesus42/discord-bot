@@ -1,48 +1,102 @@
-import { EditReply, event, Reply} from "../../utils";
-import { SelectMenuInteraction } from "discord.js";
-import { buttonSendTicketComponent, Namespaces, selectComponent, component } from "../../pages/ticket";
-import {client} from "../../client";
+import {
+    event,
+    Reply,
+    sendMessageUser,
+    getUserName,
+    deleteChannelAfterDelay,
+    createChannel,
+    sendMessageToUsersSupports,
+    EditReply
+} from "../../utils";
+import { SelectMenuInteraction, VoiceChannel, TextChannel } from "discord.js";
+import { buttonSendTicketComponent, Namespaces, selectComponent, embedSupportRequest } from "../../pages/ticket";
+import { DiscordInteractionHandler } from "../InteractionHandler/discordInteractionHandler";
+import { client } from "../../client";
+
+const supportsUsersIds: string[] = ["607266543859925014", "979712919786897479", "1061986502038536192"];
+let userID: string | null = null;
+let supportUserId: string | null = null;
+const categoryId: string = '1106726198840655914';
+let guild: any = null;
+let index: number = 0;
 
 export default event('interactionCreate', async ({ log }, interaction) => {
-    if (!interaction.isButton() && !interaction.isSelectMenu()) return;
-    const [namespace] = interaction.customId.split(';');
+    const interactionHandler = new DiscordInteractionHandler(client);
 
-    if (!Object.values(Namespaces).includes(namespace)) return;
-    try {
-        switch(namespace) {
-            case Namespaces.root:
-                return await interaction.reply(selectComponent())
-            case Namespaces.select:
-                await interaction.deferUpdate();
+    if (!interaction.isButton() && !interaction.isSelectMenu()) {
+        return;
+    }
 
-                if (interaction.isSelectMenu()) {
-                    const selectMenuInteraction = interaction as SelectMenuInteraction;
-                    return await interaction.editReply(buttonSendTicketComponent(false, selectMenuInteraction.values[0]));
-                }
-                return
-            case Namespaces.action:
-                await interaction.deferUpdate();
-                const userID = "607266543859925014";
-                const mensagem = 'Olá! Essa é uma mensagem enviada pelo bot em resposta à sua interação.';
+    let [namespace] = interaction.customId.split(';');
 
-                await enviarMensagem(mensagem, userID);
-                await interaction.editReply(buttonSendTicketComponent(true));
-                return await interaction.editReply(EditReply.success('Ticket enviado com sucesso!'));
-            default:
-                throw new Error('Invalid namespace reached...')
-        }
-    } catch (error) {
-        log('[Ticket Error]', error);
+    if (guild === null) {
+        guild = interaction.guild;
+    }
 
-        if (interaction.deferred)
-            return interaction.editReply(EditReply.error('Something went wrong :('));
+    if (userID === null) {
+        userID = interaction.user.id;
+    }
 
-        return interaction.reply(Reply.error('Something went wrong :('));
+    if (!Object.values(Namespaces).includes(namespace)) {
+        return;
+    }
+
+    if (interaction.isButton() && namespace === Namespaces.accept && supportsUsersIds[index] === null) {
+        supportUserId = interaction.user.id;
+    }
+
+    const roomName = `${await getUserName(userID)}-${await getUserName(supportUserId)}`;
+
+    console.log(await getUserName(userID), await getUserName(supportUserId));
+
+    switch (namespace) {
+        case Namespaces.root:
+            return interactionHandler.sendEphemeralReply(interaction, selectComponent());
+        case Namespaces.select:
+            await interaction.deferUpdate();
+            if (interaction.isStringSelectMenu()) {
+                const selectMenuInteraction = interaction as SelectMenuInteraction;
+                //await interactionHandler.sendEphemeralReply(interaction, buttonSendTicketComponent(false, selectMenuInteraction.values[0]));
+            return await interaction.editReply(buttonSendTicketComponent(false, selectMenuInteraction.values[0]))
+            }
+            return;
+        case Namespaces.action:
+            await interaction.deferUpdate();
+            await sendMessageUser(embedSupportRequest(await getUserName(userID)), supportsUsersIds[index]);
+            await interaction.editReply(buttonSendTicketComponent(true));
+            console.log("action", Namespaces.action);
+            await interaction.editReply(EditReply.success('Ticket enviado com sucesso!'));
+            return;
+        case Namespaces.accept:
+            await interaction.deferUpdate();
+            let textChannel: TextChannel | null = null;
+            let voiceChannel: VoiceChannel | null = null;
+            try {
+                textChannel = await createChannel(roomName, categoryId, guild) as TextChannel;
+                voiceChannel = await createChannel(roomName, categoryId, guild, true) as VoiceChannel;
+            } catch (error) {
+                console.log(error);
+            }
+            await interaction.editReply(EditReply.success(`Se direcione para a sala ${roomName}!`));
+
+            if (textChannel === null || voiceChannel === null) {
+                return;
+            }
+
+            await sendMessageToUsersSupports(userID, supportsUsersIds[index], textChannel.id);
+
+            await deleteChannelAfterDelay(textChannel.id);
+            await deleteChannelAfterDelay(voiceChannel.id);
+            return;
+        case Namespaces.refuse:
+            await interaction.deferUpdate();
+            console.log("refuse");
+            index++;
+            namespace = Namespaces.action;
+            await sendMessageUser(embedSupportRequest(await getUserName(userID)), supportsUsersIds[index]);
+            await interaction.editReply(EditReply.success('Certo, o suporte vai ser solicitado de outra pessoa!'));
+            return;
+        default:
+            throw new Error('Invalid namespace reached...');
     }
 });
-
-async function enviarMensagem(mensagem: string, userID: string) {
-        const user = await client.users.fetch(userID);
-
-        await user.send(mensagem);
-}
