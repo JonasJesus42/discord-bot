@@ -1,21 +1,20 @@
 import {
-  ButtonStyle, CategoryChannel, ChannelType,
+  ButtonStyle,
+  ChannelType,
   Client,
-  GatewayIntentBits, Guild, GuildChannel,
+  GatewayIntentBits,
   TextChannel,
 } from 'discord.js';
 import keys from '../keys';
 import { registerEvents } from '../utils';
 import events from '../events';
 import {component, embed} from "../pages/ticket";
-import ticket from "../events/interactionCreate/ticket";
 
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
 });
 
 registerEvents(client, events);
-
 
 client.on('ready', async (client) => {
 
