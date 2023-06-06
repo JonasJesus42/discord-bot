@@ -1,4 +1,4 @@
-import {google} from "googleapis";
+import { google } from "googleapis";
 
 async function getAuthSheets(): Promise<{
     auth: any;
@@ -6,7 +6,6 @@ async function getAuthSheets(): Promise<{
     googleSheets: any;
     spreadsheetId: string;
 }>{
-
     const auth = new google.auth.GoogleAuth({
         keyFile: "credentialsSheets.json",
         scopes: "https://www.googleapis.com/auth/spreadsheets",
@@ -29,17 +28,15 @@ async function getAuthSheets(): Promise<{
         spreadsheetId
     }
 }
+
 export async function getGurusNamesIds(){
     const { googleSheets, auth, spreadsheetId } = await getAuthSheets()
-
-    const metadata = await googleSheets.spreadsheets.get({
-        auth,
-        spreadsheetId,
-    })
 
     const rows = await googleSheets.spreadsheets.values.get({
         auth,
         spreadsheetId,
         range: "Suport Guru Bot"
     })
+
+    return rows.data.values
 }
