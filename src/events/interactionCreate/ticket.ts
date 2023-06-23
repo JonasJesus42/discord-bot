@@ -13,6 +13,7 @@ import { buttonSendTicketComponent, Namespaces, selectComponent, embedSupportReq
 import { DiscordInteractionHandler } from "../InteractionHandler/discordInteractionHandler";
 import { client } from "../../client";
 import {Guru, IGuru} from "../../schemas/guru";
+import {TicketHandle} from "./ticketHandle";
 
 let supportsGuildId: string[] = ["607266543859925014", "979712919786897479", "1061986502038536192"];
 const categoryId: string = '1106726198840655914';
@@ -24,7 +25,6 @@ Guru.find<IGuru>({ inAttendance: false }).then((docs) => {
 })
 
 export default event('interactionCreate', async ({ log }, interaction) => {
-    const interactionHandler = new DiscordInteractionHandler(client);
     if (!interaction.isButton() && !interaction.isSelectMenu()) {
         return;
     }
@@ -34,6 +34,8 @@ export default event('interactionCreate', async ({ log }, interaction) => {
     if (guild === null) {
         guild = interaction.guild;
     }
+    const interactionHandler = new DiscordInteractionHandler(client);
+    const ticketHandle = new TicketHandle(interaction.user.id, interaction.user.username, client);
 
     switch (namespace) {
         case Namespaces.root:
