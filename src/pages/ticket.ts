@@ -1,5 +1,6 @@
 import {APIEmbedField, ButtonStyle, EmbedBuilder, InteractionReplyOptions} from "discord.js";
 import {ActionRowBuilder, ButtonBuilder, SelectMenuBuilder} from "@discordjs/builders";
+import {createId, readId} from "../utils";
 
 export const Namespaces = {
     root: 'open_menu_ticket_button',
@@ -43,9 +44,11 @@ export function selectComponent(): InteractionReplyOptions {
     }
 }
 
-export function buttonSendTicketComponent(disabled: boolean = false, selectValue?: string): InteractionReplyOptions {
+export function buttonSendTicketComponent(disabled: boolean = false, newId: string): InteractionReplyOptions {
+    const [_namespace, guildId, categoryName] = readId(newId)
+    console.log(readId(newId))
     const embed = new EmbedBuilder()
-        .setTitle(`Antes de enviar o ticket para equipe de ${selectValue} certifique de:`)
+        .setTitle(`Antes de enviar o ticket para equipe de ${categoryName} certifique de:`)
         .setDescription('1° Ter passado 30 minutos para debugar ou tentado achar uma solução\n ' +
             '2° Ter pesquisado no google\n' + '3° Ter pesquisado no stackoverflow\n')
 
@@ -78,19 +81,23 @@ export const component = new ActionRowBuilder<ButtonBuilder>().addComponents(
         .setStyle(ButtonStyle.Success),
 )
 
-export function embedSupportRequest(UserName: string, disabled: boolean = false): InteractionReplyOptions {
+export function embedSupportRequest(customId: string,  guildId?: string, disabled: boolean = false,): InteractionReplyOptions {
+    const [_namespace, UserName] = customId.split(';')
+    console.log({UserName , customId})
     const embed = new EmbedBuilder()
         .setTitle(`${UserName} Solicita um soporte técnico`)
         .setDescription('Voce tem a disponibilidade para atender ?')
 
+    const acceptedId = createId(Namespaces.accept, UserName, guildId)
     const accepted =  new ButtonBuilder()
-        .setCustomId('accepted_ticket_button')
+        .setCustomId(acceptedId)
         .setStyle(ButtonStyle.Success)
         .setLabel('Aceitar')
         .setDisabled(disabled)
 
+    const refuseId = createId(Namespaces.refuse, UserName)
     const refuse =  new ButtonBuilder()
-        .setCustomId('refuse_ticket_button')
+        .setCustomId(refuseId)
         .setStyle(ButtonStyle.Danger)
         .setLabel('Recusar')
         .setDisabled(disabled)

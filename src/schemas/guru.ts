@@ -1,6 +1,6 @@
 import {model , Schema} from 'mongoose';
 
-interface IGuru {
+export interface IGuru {
     name: string;
     guildId: string;
     inAttendance: boolean;
