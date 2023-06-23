@@ -12,7 +12,7 @@ export interface InteractionHandler {
     name: string;
     run: (client: Client, interaction: Interaction) => Promise<void>;
 }
-const SECONDS_DELETE_MESSAGE_EPHEMERAL: number = 30000
+
 export class DiscordInteractionHandler {
     private readonly client: Client;
     private readonly handlers: InteractionHandler[] = [
@@ -37,27 +37,6 @@ export class DiscordInteractionHandler {
         // Register all handlers here
         // Example:
         // this.registerHandler(new MyCustomInteractionHandler());
-    }
-
-    private async deleteEphemeralMessage(message: any, delay: number): Promise<void> {
-        setTimeout(async () => {
-            try {
-                await message.delete();
-            } catch (error) {
-                console.error(`Erro ao excluir mensagem: ${error}`);
-            }
-        }, delay);
-    }
-
-    public async sendEphemeralReply(interaction: MessageComponentInteraction , content: InteractionReplyOptions): Promise<void> {
-        const {embeds, components} = content
-        const reply = await interaction.reply({ embeds, components, ephemeral: true });
-        await this.deleteEphemeralMessage(reply, SECONDS_DELETE_MESSAGE_EPHEMERAL);
-    }
-
-    public async sendEditEphemeralReply(interaction: MessageComponentInteraction , content: InteractionReplyOptions): Promise<void> {
-        const {embeds, components} = content
-        const reply = await interaction.editReply({ embeds, components });
     }
 
     public listen(): void {

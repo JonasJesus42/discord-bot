@@ -3,10 +3,10 @@ import {ActionRowBuilder, ButtonBuilder, SelectMenuBuilder} from "@discordjs/bui
 import {createId, readId} from "../utils";
 
 export const Namespaces = {
-    root: 'open_menu_ticket_button',
-    select: 'select_category',
-    action: 'open_ticket_button',
-    accept: 'accepted_ticket_button',
+    openTicket: 'open_menu_ticket_button',
+    selectCategory: 'select_category',
+    confirmedOpenTicket: 'open_ticket_button',
+    acceptedTicket: 'accepted_ticket_button',
     refuse: 'refuse_ticket_button',
 
 }
@@ -45,15 +45,16 @@ export function selectComponent(): InteractionReplyOptions {
 }
 
 export function buttonSendTicketComponent(disabled: boolean = false, newId: string): InteractionReplyOptions {
-    const [_namespace, guildId, categoryName] = readId(newId)
-    console.log(readId(newId))
+    const [_namespace, userName, userId, categoryName] = readId(newId)
+
     const embed = new EmbedBuilder()
         .setTitle(`Antes de enviar o ticket para equipe de ${categoryName} certifique de:`)
         .setDescription('1° Ter passado 30 minutos para debugar ou tentado achar uma solução\n ' +
             '2° Ter pesquisado no google\n' + '3° Ter pesquisado no stackoverflow\n')
 
+    const id = createId('open_ticket_button', categoryName)
     const sendTicket =  new ButtonBuilder()
-        .setCustomId('open_ticket_button')
+        .setCustomId(id)
         .setStyle(ButtonStyle.Success)
         .setLabel('Enviar Ticket')
         .setDisabled(disabled)
@@ -82,20 +83,20 @@ export const component = new ActionRowBuilder<ButtonBuilder>().addComponents(
 )
 
 export function embedSupportRequest(customId: string,  guildId?: string, disabled: boolean = false,): InteractionReplyOptions {
-    const [_namespace, UserName] = customId.split(';')
-    console.log({UserName , customId})
+    const [_namespace, userName, userId, stack] = customId.split(';')
+    console.log(guildId)
     const embed = new EmbedBuilder()
-        .setTitle(`${UserName} Solicita um soporte técnico`)
+        .setTitle(`${userName} Solicita um soporte técnico para ${stack}`)
         .setDescription('Voce tem a disponibilidade para atender ?')
 
-    const acceptedId = createId(Namespaces.accept, UserName, guildId)
+    const acceptedId = createId(Namespaces.confirmedOpenTicket, userName, userId, guildId)
     const accepted =  new ButtonBuilder()
         .setCustomId(acceptedId)
         .setStyle(ButtonStyle.Success)
         .setLabel('Aceitar')
         .setDisabled(disabled)
 
-    const refuseId = createId(Namespaces.refuse, UserName)
+    const refuseId = createId(Namespaces.refuse, userName)
     const refuse =  new ButtonBuilder()
         .setCustomId(refuseId)
         .setStyle(ButtonStyle.Danger)

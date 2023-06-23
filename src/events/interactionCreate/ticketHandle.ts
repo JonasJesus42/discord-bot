@@ -14,6 +14,14 @@ export class TicketHandle {
         this.client = client;
     }
 
+    public getUserId(): string {
+        return this.userId;
+    }
+
+    public getUserName(): string {
+        return this.userName;
+    }
+
     public async sendEphemeralReply(interaction: MessageComponentInteraction , content: InteractionReplyOptions): Promise<void> {
         const {embeds, components} = content
         const reply = await interaction.reply({ embeds, components, ephemeral: true });
@@ -29,4 +37,11 @@ export class TicketHandle {
             }
         }, delay);
     }
+
+    public async sendEditEphemeralReply(interaction: MessageComponentInteraction , content: InteractionReplyOptions): Promise<void> {
+        const {embeds, components} = content
+        const reply = await interaction.editReply({ embeds, components });
+    }
+
+
 }
