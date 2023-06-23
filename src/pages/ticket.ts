@@ -1,4 +1,4 @@
-import {APIEmbedField, ButtonStyle, EmbedBuilder, InteractionReplyOptions} from "discord.js";
+import { ButtonStyle, EmbedBuilder, InteractionReplyOptions} from "discord.js";
 import {ActionRowBuilder, ButtonBuilder, SelectMenuBuilder} from "@discordjs/builders";
 import {createId, readId} from "../utils";
 
@@ -7,7 +7,7 @@ export const Namespaces = {
     selectCategory: 'select_category',
     confirmedOpenTicket: 'open_ticket_button',
     acceptedTicket: 'accepted_ticket_button',
-    refuse: 'refuse_ticket_button',
+    refuseTicket: 'refuse_ticket_button',
 
 }
 
@@ -96,7 +96,7 @@ export function embedSupportRequest(customId: string,  guildId?: string, disable
         .setLabel('Aceitar')
         .setDisabled(disabled)
 
-    const refuseId = createId(Namespaces.refuse, userName)
+    const refuseId = createId(Namespaces.refuseTicket, userName)
     const refuse =  new ButtonBuilder()
         .setCustomId(refuseId)
         .setStyle(ButtonStyle.Danger)
