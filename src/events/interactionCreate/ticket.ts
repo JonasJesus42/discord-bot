@@ -34,13 +34,13 @@ export default event('interactionCreate', async ({ log }, interaction) => {
     if (guild === null) {
         guild = interaction.guild;
     }
-    const interactionHandler = new DiscordInteractionHandler(client);
+
     const ticketHandle = new TicketHandle(interaction.user.id, interaction.user.username, client);
 
     switch (namespace) {
         case Namespaces.root:
-            //verificando chamada e enviando o componente de seleção
-            return interactionHandler.sendEphemeralReply(interaction, selectComponent());
+
+            return ticketHandle.sendEphemeralReply(interaction, selectComponent());
         case Namespaces.select:
             //verificando valor selecionado e criando o id
             let newIid = createId(
