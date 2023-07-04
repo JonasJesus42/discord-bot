@@ -1,5 +1,6 @@
 export interface Keys {
   clientToken: string;
-  testGuild: string;
+  Guild: string;
   testChannel: string;
+  CategoryID: string;
 }
