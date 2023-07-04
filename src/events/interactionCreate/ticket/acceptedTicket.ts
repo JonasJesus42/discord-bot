@@ -10,10 +10,10 @@ import { Namespaces } from '../../../pages/ticket';
 import {ChannelType, TextChannel, VoiceChannel} from 'discord.js';
 import {client} from "../../../client";
 import * as Process from "process";
+import {includes} from "lodash";
 
 export default event('interactionCreate', async ({ log }, interaction: any) => {
-  const [namespace] = interaction.customId.split(';');
-  if (!(Namespaces.acceptedTicket === namespace && interaction.isButton()))
+  if (!(interaction.customId.includes(Namespaces.acceptedTicket) && interaction.isButton()))
     return;
 
   let supportsGuildId: string[] = ['607266543859925014'];

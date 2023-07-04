@@ -2,8 +2,7 @@ import { EditReply, event } from '../../../utils';
 import { Namespaces, selectComponent } from '../../../pages/ticket';
 
 export default event('interactionCreate', async ({ log: LoggerFunction }, interaction: any) => {
-  const [namespace] = interaction.customId.split(';');
-  if (!(Namespaces.refuseTicket === namespace && interaction.isButton())) return
+  if (!(interaction.customId.includes(Namespaces.refuseTicket) && interaction.isButton())) return
 
   let index: number = 0;
   await interaction.deferUpdate();

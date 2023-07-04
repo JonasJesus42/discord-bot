@@ -8,12 +8,7 @@ let supportsGuildId: string[] = ['607266543859925014'];
 export default event(
   'interactionCreate',
   async ({ log: LoggerFunction }, interaction: any) => {
-    const [namespace] = interaction.customId.split(';');
-    if (
-      !(
-          Namespaces.confirmedOpenTicket === namespace && interaction.isButton()
-      )
-    ) return
+    if (!(interaction.customId.includes(Namespaces.confirmedOpenTicket) && interaction.isButton())) return
 
     try {
       await interaction.deferUpdate();

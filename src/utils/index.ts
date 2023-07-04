@@ -5,6 +5,5 @@ export * from './chunk';
 export * from './interaction';
 export * from './sendMessageUser';
 export * from './getUserName';
-export * from './createChannel';
 export * from './deleteChannelAfterDelay';
 export * from './sendMessageToUsersSupports';

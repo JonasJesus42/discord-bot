@@ -3,8 +3,7 @@ import { Namespaces, selectComponent } from '../../../pages/ticket';
 import { sendEphemeralReply } from '../../../utils/messageEphemera';
 
 export default event('interactionCreate', async ({ log: LoggerFunction }, interaction: any) => {
-  const [namespace] = interaction.customId.split(';');
-  if (!(Namespaces.openTicket === namespace && interaction.isButton())) return;
+  if (!(interaction.customId.includes(Namespaces.openTicket) && interaction.isButton())) return;
 
   try {
     const ephemeraMessage = await sendEphemeralReply(

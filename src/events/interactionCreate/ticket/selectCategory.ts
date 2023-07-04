@@ -5,11 +5,7 @@ import { sendEditEphemeralReply } from '../../../utils/messageEphemera';
 
 export default event('interactionCreate', async ({ log: LoggerFunction }, interaction: any) => {
   let [namespace] = interaction.customId.split(';');
-  if (
-    !(
-      Namespaces.selectCategory === namespace && interaction.isStringSelectMenu()
-    )
-  )
+  if (!(interaction.customId.includes(Namespaces.selectCategory) && interaction.isStringSelectMenu()))
     return;
 
   try {
