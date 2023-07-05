@@ -6,7 +6,7 @@ export interface IGuru {
   inAttendance: boolean;
 }
 
-const guruSchema = new Schema({
+const guruSchema = new Schema<IGuru>({
   name: String,
   guildId: {
     type: String,

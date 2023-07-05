@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
-const mongoURI =
-  'mongodb+srv://root:0aJqjr5pDCCBrVVZ@cluster0.mci07wx.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGO_URI as string;
 
 export async function connectToMongoDB() {
   try {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      user: "root",
+      pass: "12345678",
+      authSource: "admin",
+    });
+    console.log('Connected to MongoDB');
     return true;
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);

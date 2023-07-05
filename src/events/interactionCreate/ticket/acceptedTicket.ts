@@ -11,6 +11,7 @@ import {ChannelType, TextChannel, VoiceChannel} from 'discord.js';
 import {client} from "../../../client";
 import * as Process from "process";
 import {includes} from "lodash";
+import {Service} from "../../../schemas/service";
 
 export default event('interactionCreate', async ({ log }, interaction: any) => {
   if (!(interaction.customId.includes(Namespaces.acceptedTicket) && interaction.isButton()))
@@ -24,22 +25,24 @@ export default event('interactionCreate', async ({ log }, interaction: any) => {
       interaction.customId
     );
 
-    const roomName = `${userName}-${await getUserName(guruId)}`;
+    await updateService(userId, guruId, interaction);
 
-    const [voiceChannel, textChannel] = await creatingTextVoiceChannel(roomName);
-
-    await interaction.editReply(
-      EditReply.success(`Se direcione para a sala ${roomName}!`)
-    );
-
-    await sendMessageToUsersSupports(
-      userId,
-      supportsGuildId[0],
-      textChannel.id
-    );
-
-    await deleteChannelAfterDelay(textChannel.id);
-    await deleteChannelAfterDelay(voiceChannel.id);
+    // const roomName = `${userName}-${await getUserName(guruId)}`;
+    //
+    // const [voiceChannel, textChannel] = await creatingTextVoiceChannel(roomName);
+    //
+    // await interaction.editReply(
+    //   EditReply.success(`Se direcione para a sala ${roomName}!`)
+    // );
+    //
+    // await sendMessageToUsersSupports(
+    //   userId,
+    //   supportsGuildId[0],
+    //   textChannel.id
+    // );
+    //
+    // await deleteChannelAfterDelay(textChannel.id);
+    // await deleteChannelAfterDelay(voiceChannel.id);
   } catch (error) {
     console.log(error);
   }
@@ -63,4 +66,25 @@ async function creatingTextVoiceChannel(
   })) as VoiceChannel;
 
   return [voiceChannel, textChannel];
+}
+
+async function updateService(userId: string, guruId: string, interaction: any) {
+  const service = await Service.findOne({
+    guildId: userId,
+    waitingService: true,
+  })
+
+  if (!service) {
+    await interaction.editReply(
+        EditReply.error('Ticket já foi aceito por outro guru!')
+    );
+    return;
+  }
+
+  const updateService = {
+    waitingService: false,
+    guruId: guruId,
+  }
+
+  await service.updateOne(updateService);
 }
